@@ -7,7 +7,7 @@ import BLogin from '../components/BLogin'
 import GoogleKeep from '../components/googleKeep'
 import Invoice from '../components/Invoice'
 import Act from '../components/Act'
-import Menu from '../components/Menu'
+import Admin_UI from '../components/menu_ui/Admin_UI'
 import BRegister from '../components/BRegister'
 //import { TokenService } from '../_services/storage.service';
 
@@ -18,17 +18,17 @@ export const router = new Router({
   base: process.env.BASE_URL,
   routes: [
     { path: '/home', component: Home,
-    children: [
-      { path: '/invoice', component: Invoice },
-      { path: '/act', component: Act }
+      children: [
+        { path: '/invoice', component: Invoice },
+        { path: '/act', component: Act }
       ]
     },
 
-    { path: '/login', component: BLogin },        
-    { path: '/blogin', component: BLogin },    
+    { path: '/login', component: BLogin },
+    { path: '/blogin', component: BLogin },
     { path: '/register', component: BRegister },
     { path: '/googleKeep', component: GoogleKeep},
-    { path: '/menu', component: Menu },
+    { path: '/admin_ui', component: Admin_UI},
     { path: '*', redirect: '/login' }
   ]
 });
@@ -40,7 +40,7 @@ router.beforeEach((to, from, next) => {
   const loggedIn = localStorage.getItem('user'); //TokenService.getToken();
 
   if (authRequired && !loggedIn) {
-    return next('/login');    
+    return next('/login');
   }
 
   next();

@@ -2,7 +2,8 @@ import Vue from 'vue'
 import Vuex from 'vuex'
 import { router } from '../_helpers';
 //import { userService } from '../_services';
-import { http } from '../_helpers'
+import {http} from '../_helpers/http-common'
+import { ContactModule } from "./Contact.Module";
 
 Vue.use(Vuex)
 const user = JSON.parse(localStorage.getItem('user'));
@@ -11,41 +12,52 @@ const initialState = user
   : { status: { loggedIn: false }, user: {}, alert: { type: '', message: '' }, socket: { isConnected: false,  message: '',  reconnectError: false } };
 
 export default new Vuex.Store({
+
+
   namespaced: true,
   state: initialState,
   actions: {
-    login({ dispatch, commit }, { username, password }) {
-      commit('loginRequest', { username });
+      login({dispatch, commit}, {username, password}) {
+          debugger
+          commit('loginRequest', {username});
+          http.post("Account/login", {username, password})
+              .then(response => {
+                      debugger
+                      let user = response.data;
+                      if (user.token) {
+                          debugger
+                          localStorage.setItem('user', JSON.stringify(user));
+                          commit('loginSuccess', user);
+                          debugger
+                          router.push('/admin_ui')
+                      }
+                  },
+                  error => {
+                      debugger
+                      commit('loginFailure', error);
 
-      http.post("account/login", { username, password })
-        //.then(handleResponse)
-        .then(response => {
-          let user = response.data;
-          if (user.token) {
-            // store user details and jwt token in local storage to keep user logged in between page refreshes
-            localStorage.setItem('user', JSON.stringify(user));
-            commit('loginSuccess', user);
-            router.push('/home');
-          }
-        },
-          error => {
-            commit('loginFailure', error);
-            dispatch('error', error, { root: true });
-          });
-    },
+                      console.log(error)
+                      debugger
+                      dispatch('error', error, {root: true});
+                  })
+      },
     register({ dispatch, commit }, user) {
+          debugger
       commit('registerRequest', user);
-      http.post("account/register", JSON.stringify(user))
+      http.post("Account/register", JSON.stringify(user))
         .then(response => {
+            debugger
           let user = response.data;
           commit('registerSuccess', user);
           router.push('/login');
+          debugger
           setTimeout(() => {
             // display success message after route change completes
             dispatch('success', 'Registration successful', { root: true });
           })
         },
           error => {
+            debugger
             commit('registerFailure', error);
             dispatch('error', error, { root: true });
           });     
@@ -125,5 +137,6 @@ export default new Vuex.Store({
     }
   },
   modules: {
+      ContactModule
   }
 })

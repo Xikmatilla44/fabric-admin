@@ -6,9 +6,9 @@ const token = user ? user.token : '';
 
 
 export const http = axios.create({
-   baseURL: `http://localhost/ebill/api/`,
-   headers: {     
-        Authorization: `Bearer `+token,        
+   baseURL: `http://localhost/api/`,
+   headers: {
+        Authorization: `Bearer `+token,
         'Content-Type': 'application/json'
    }
  })
